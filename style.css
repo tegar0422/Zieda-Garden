@@ -1089,7 +1089,7 @@ body[data-halaman="login"] main.wadah {
 }
 .baris-keranjang {
   display: grid;
-  grid-template-columns: 56px 1fr;
+  grid-template-columns: 56px (0, 1fr);
   gap: 6px 12px;
   align-items: center;
   padding: 12px;
@@ -1407,6 +1407,10 @@ body[data-halaman="sukses"] #halaman-sukses {
   }
   .kotak {
     padding: 16px;
+  }
+
+  .dua-kolom {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   /* --- Footer --- */
