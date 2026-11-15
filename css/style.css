@@ -1,7 +1,7 @@
 /* Font */
 @font-face {
   font-family: "Poppins";
-  src: url(assets/font/Poppins-Regular.ttf) format("truetype");
+  src: url(../assets/font/Poppins-Regular.ttf) format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: "Poppins";
-  src: url(assets/font/Poppins-Medium.ttf) format("truetype");
+  src: url(../assets/font/Poppins-Medium.ttf) format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -17,7 +17,7 @@
 
 @font-face {
   font-family: "Poppins";
-  src: url(assets/font/Poppins-SemiBold.ttf) format("truetype");
+  src: url(../assets/font/Poppins-SemiBold.ttf) format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -25,7 +25,7 @@
 
 @font-face {
   font-family: "Poppins";
-  src: url(assets/font/Poppins-Bold.ttf) format("truetype");
+  src: url(../assets/font/Poppins-Bold.ttf) format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -104,6 +104,10 @@ textarea {
 :focus-visible {
   outline: 3px solid var(--aksen);
   outline-offset: 2px;
+}
+
+h1:focus {
+  outline: none;
 }
 
 /* Tata Letak */
@@ -299,8 +303,8 @@ main.wadah {
 
 .logo img {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 10px;
   background: var(--krem);
 }

@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Zieda Garden - kafe" />
     <title>Katalog Zieda Garden</title>
-    <link rel="icon" type="image/x-icon" href="assets/foto/logo1.ico" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="assets/foto/favicon.ico" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
 
   <body>
@@ -17,7 +17,7 @@
       <div class="wadah kepala-isi">
         <!-- Logo -->
         <a href="#/" class="logo" aria-label="Zieda Garden, ke halaman katalog">
-          <img src="assets/foto/logo.png" alt="" width="44" height="44" />
+          <img src="assets/foto/logo.webp" alt="" width="88" height="88" />
           <span class="logo-nama">Zieda Garden</span>
         </a>
 
@@ -51,7 +51,9 @@
               height="20"
             />
             <span>Keranjang</span>
-            <span class="lencana" id="lencana-keranjang">0</span>
+            <span class="lencana" id="lencana-keranjang" aria-live="polite"
+              >0</span
+            >
           </a>
           <a href="#/login" data-nav="login" id="nav-masuk">Masuk</a>
           <button type="button" id="tombol-keluar">Keluar</button>
@@ -114,13 +116,13 @@
                 <a class="kartu-tautan" href="#/detail/1">
                   <div class="kartu-gambar">
                     <div class="kartu-bingkai bingkai-foto">
-                      <img class="foto" src="assets/foto/latte.png" alt="" />
+                      <img class="foto" src="assets/foto/latte.webp" alt="" />
                       <strong class="kartu-label label-foto">Latte</strong>
                     </div>
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Latte</h2>
-                    <p class="kartu-catatan">Halus, Lembut, Manis</p>
+                    <p class="kartu-catatan">Creamy, Cokelat, Manis Pas</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -135,18 +137,18 @@
                 data-nama="Juice"
                 data-kategori="minuman"
                 data-harga="15000"
-                data-deskripsi="Minuman berlapis yang cantik di mata dan nikmat di lidah: sirup ungu pekat yang manis di dasar gelas bertemu susu creamy yang lembut di atasnya, disajikan dingin dengan es batu. Satu tegukan menghadirkan perpaduan manis, segar, dan creamy sekaligus. Penyegar sempurna di hari yang cerah."
+                data-deskripsi="Jus buah segar dengan tekstur berserat yang kental, disajikan dingin dengan es batu. Minuman yang menyegarkan."
               >
                 <a class="kartu-tautan" href="#/detail/2">
                   <div class="kartu-gambar">
                     <div class="kartu-bingkai bingkai-foto">
-                      <img class="foto" src="assets/foto/juice.png" alt="" />
+                      <img class="foto" src="assets/foto/juice.webp" alt="" />
                       <strong class="kartu-label label-foto">Juice</strong>
                     </div>
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Juice</h2>
-                    <p class="kartu-catatan">Segar, Wangi</p>
+                    <p class="kartu-catatan">Segar, Berserat, Buah Segar</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -168,7 +170,7 @@
                     <div class="kartu-bingkai bingkai-foto">
                       <img
                         class="foto"
-                        src="assets/foto/cream_cheese.png"
+                        src="assets/foto/cream_cheese.webp"
                         alt=""
                       />
                       <strong class="kartu-label label-foto"
@@ -178,7 +180,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Cream Cheese</h2>
-                    <p class="kartu-catatan">Lembut, Harum, Manis</p>
+                    <p class="kartu-catatan">Creamy, Asam Manis, Renyah</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -198,7 +200,7 @@
                 <a class="kartu-tautan" href="#/detail/4">
                   <div class="kartu-gambar">
                     <div class="kartu-bingkai bingkai-foto">
-                      <img class="foto" src="assets/foto/pisang.png" alt="" />
+                      <img class="foto" src="assets/foto/pisang.webp" alt="" />
                       <strong class="kartu-label label-foto"
                         >Pisang Crip Crap</strong
                       >
@@ -206,7 +208,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Pisang Crip Crap</h2>
-                    <p class="kartu-catatan">Lembut, Harum, Manis</p>
+                    <p class="kartu-catatan">Renyah, Gurih, Manis</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -227,7 +229,7 @@
         <div class="masuk">
           <!-- Fitur foto login -->
           <div class="masuk-visual">
-            <img src="assets/foto/tampak_luar.jpg" alt="" />
+            <img src="assets/foto/tampak_luar.webp" alt="" />
           </div>
 
           <!-- Fitur formulir masuk -->
@@ -235,7 +237,7 @@
             <!-- Fitur logo dan judul login -->
             <img
               class="masuk-logo"
-              src="assets/foto/logo.png"
+              src="assets/foto/logo.webp"
               alt="Zieda Garden"
               width="72"
               height="72"
@@ -275,7 +277,7 @@
                 required
               />
               <p class="pesan-galat">Password wajib diisi.</p>
-              <p class="pesan-galat" id="login-salah" hidden>
+              <p class="pesan-galat" id="login-salah" role="alert" hidden>
                 Username atau password salah.
               </p>
             </div>
@@ -306,7 +308,7 @@
             <img
               class="foto"
               id="detail-gambar"
-              src="assets/foto/juice.png"
+              src="assets/foto/juice.webp"
               alt=""
             />
           </div>
@@ -339,7 +341,13 @@
                   <label class="hanya-pembaca-layar" for="isian-jumlah"
                     >Jumlah</label
                   >
-                  <input type="number" id="isian-jumlah" min="1" value="1" />
+                  <input
+                    type="number"
+                    id="isian-jumlah"
+                    min="1"
+                    max="99"
+                    value="1"
+                  />
                   <button
                     type="button"
                     id="tombol-tambah"
@@ -362,6 +370,7 @@
                 type="button"
                 class="tombol-keranjang"
                 id="tombol-keranjang"
+                aria-live="polite"
               >
                 Tambah ke keranjang
               </button>
@@ -427,7 +436,8 @@
                     pattern="[A-Za-z][A-Za-z .'\-]{2,}"
                   />
                   <p class="pesan-galat">
-                    Nama wajib diisi, minimal 3 huruf (hanya huruf dan spasi).
+                    Nama wajib diisi, minimal 3 huruf (huruf, spasi, titik,
+                    apostrof, atau tanda hubung).
                   </p>
                 </div>
                 <div class="kolom-isian">
@@ -440,7 +450,8 @@
                     pattern="(\+62|62|0)8[0-9]{8,11}"
                   />
                   <p class="pesan-galat">
-                    Nomor HP wajib diisi, angka saja, diawali 08 atau +62.
+                    Nomor HP wajib diisi, diawali 08, 62, atau +62, tanpa spasi
+                    atau tanda hubung.
                   </p>
                 </div>
               </div>
@@ -458,7 +469,6 @@
                   autocomplete="street-address"
                   required
                   minlength="10"
-                  pattern=".*\S.*"
                 ></textarea>
                 <p class="pesan-galat">
                   Alamat wajib diisi lengkap (minimal 10 karakter).
@@ -532,6 +542,7 @@
           <div class="sukses-ikon" aria-hidden="true">✅</div>
           <h1>Pesanan berhasil dibuat!</h1>
           <p id="sukses-pemesan"></p>
+          <p id="sukses-rincian"></p>
           <!-- Fitur rincian pesanan yang baru dibuat -->
           <div class="struk">
             <div class="daftar-ringkas" id="sukses-daftar"></div>
@@ -554,7 +565,7 @@
           <!-- Profil Kedai -->
           <section>
             <p class="kaki-logo">
-              <img src="assets/foto/logo.png" alt="" width="40" height="40" />
+              <img src="assets/foto/logo.webp" alt="" width="40" height="40" />
               Zieda Garden
             </p>
             <p>
@@ -576,7 +587,7 @@
                 <dd>Tetap Buka Seperti Biasa</dd>
               </div>
             </dl>
-            <p class="kaki-info">Pesan online, ambil di kedai</p>
+            <p class="kaki-info">Pesan online, antar atau ambil di kedai</p>
             <p class="kaki-info">Instagram: @ZiedaGarden</p>
           </section>
 
@@ -626,6 +637,6 @@
         </div>
       </article>
     </template>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>
