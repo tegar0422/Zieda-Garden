@@ -111,7 +111,7 @@
                 data-nama="Latte"
                 data-kategori="minuman"
                 data-harga="24000"
-                data-deskripsi="Latte creamy yang disajikan dalam gelas tinggi, dengan dinding gelas berlumur saus cokelat yang melimpah. Teksturnya halus dan lembut, manisnya pas, dengan sentuhan cokelat di setiap tegukan. Minuman yang memanjakan dan jadi teman sempurna untuk bersantai di taman."
+                data-deskripsi="Perpaduan sempurna espresso pilihan dengan susu segar yang menghasilkan tekstur creamy lembut, sentuhan cokelat yang pas, serta tingkat kemanisan yang tidak bikin enek. Teman setia untuk menemani waktu santai atau bekerja."
               >
                 <a class="kartu-tautan" href="#/detail/1">
                   <div class="kartu-gambar">
@@ -122,7 +122,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Latte</h2>
-                    <p class="kartu-catatan">Creamy, Cokelat, Manis Pas</p>
+                    <p class="kartu-catatan">Kopi, Susu, Manis</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -137,7 +137,7 @@
                 data-nama="Juice"
                 data-kategori="minuman"
                 data-harga="15000"
-                data-deskripsi="Jus buah segar dengan tekstur berserat yang kental, disajikan dingin dengan es batu. Minuman yang menyegarkan."
+                data-deskripsi="Terbuat dari 100% buah segar pilihan berkualitas tinggi yang kaya serat dan vitamin. Disajikan dingin untuk memberikan kesegaran maksimal dan energi instan sepanjang hari."
               >
                 <a class="kartu-tautan" href="#/detail/2">
                   <div class="kartu-gambar">
@@ -148,7 +148,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Juice</h2>
-                    <p class="kartu-catatan">Segar, Berserat, Buah Segar</p>
+                    <p class="kartu-catatan">Segar, Manis, Asam</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -163,7 +163,7 @@
                 data-nama="Cream Cheese"
                 data-kategori="makanan"
                 data-harga="25000"
-                data-deskripsi="Cheesecake premium berbentuk segitiga dengan lapisan saus anggur ungu pekat yang kaya rasa. Dipercik whipped cream lembut dan irisan anggur segar sebagai pelengkap, dengan dasar biscuit gurih yang renyah. Setiap suapan menghadirkan perpaduan creamy, manis, dan sedikit asam yang bikin nagih."
+                data-deskripsi="Sensasi rasa unik dengan lapisan cream cheese yang creamy, perpaduan rasa asam-manis yang pas, serta tekstur renyah di setiap gigitan. Cocok banget buat pencinta camilan gurih-manis modern."
               >
                 <a class="kartu-tautan" href="#/detail/3">
                   <div class="kartu-gambar">
@@ -180,7 +180,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Cream Cheese</h2>
-                    <p class="kartu-catatan">Creamy, Asam Manis, Renyah</p>
+                    <p class="kartu-catatan">Gurih, Asam, Manis</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -195,7 +195,7 @@
                 data-nama="Pisang Crip Crap"
                 data-kategori="makanan"
                 data-harga="17000"
-                data-deskripsi="Tiga buah pisang goreng crispy dengan balutan renyah yang digoreng hingga keemasan sempurna. Berlimpah taburan gula bubuk di atasnya, ditutup satu stroberi segar sebagai sentuhan manis. Renyah di luar, lembut di dalam — camilan hangat paling pas untuk teman bersantai."
+                data-deskripsi="Olahan pisang pilihan dengan balutan krispi ekstra renyah, berpadu dengan rasa manis gurih yang bikin ketagihan. Camilan santai juara yang paling pas dinikmati bersama minuman favoritmu."
               >
                 <a class="kartu-tautan" href="#/detail/4">
                   <div class="kartu-gambar">
@@ -208,7 +208,7 @@
                   </div>
                   <div class="kartu-isi">
                     <h2 class="kartu-nama">Pisang Crip Crap</h2>
-                    <p class="kartu-catatan">Renyah, Gurih, Manis</p>
+                    <p class="kartu-catatan">Manis, Legit, Gurih</p>
                   </div>
                 </a>
                 <div class="kartu-bawah">
@@ -217,9 +217,26 @@
               </article>
             </div>
             <!-- Menu tidak ditemukan -->
-            <p class="kosong" id="katalog-kosong">
-              Menu tidak ditemukan. Coba kata lain atau pilih kategori lain.
-            </p>
+            <div class="kosong" id="katalog-kosong" hidden>
+              <div class="kosong-ikon" aria-hidden="true">🔍</div>
+              <p class="kosong-judul">Menu tidak ditemukan</p>
+              <p class="kosong-deskripsi">
+                Kami tidak menemukan menu yang cocok dengan pencarian Anda.
+              </p>
+              <p class="kosong-saran">
+                Atau coba kata lain dan pilih kategori lain.
+              </p>
+            </div>
+            <!-- Rekomendasi menu lain -->
+            <section
+              class="rekomendasi-section"
+              id="rekomendasi-section"
+              hidden
+              aria-label="Menu yang tersedia"
+            >
+              <h2 class="rekomendasi-judul">Menu yang tersedia</h2>
+              <div class="grid-produk" id="grid-rekomendasi"></div>
+            </section>
           </div>
         </div>
       </section>
@@ -270,12 +287,56 @@
                 />
                 Password
               </label>
-              <input
-                type="password"
-                id="isian-password"
-                autocomplete="current-password"
-                required
-              />
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="isian-password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  id="toggle-password"
+                  aria-label="Tampilkan password"
+                  aria-pressed="false"
+                >
+                  <svg
+                    class="icon-eye-open"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg
+                    class="icon-eye-closed"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                    ></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                </button>
+              </div>
               <p class="pesan-galat">Password wajib diisi.</p>
               <p class="pesan-galat" id="login-salah" role="alert" hidden>
                 Username atau password salah.
@@ -587,7 +648,7 @@
                 <dd>Buka seperti biasa</dd>
               </div>
             </dl>
-            <p class="kaki-info">Pesan online, antar atau ambil di kedai</p>
+            <p class="kaki-info">Pesan online, antar atau ambil di kedai.</p>
             <p class="kaki-info">Instagram: @ZiedaGarden</p>
           </section>
 

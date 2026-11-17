@@ -116,12 +116,64 @@ function tampilkanKatalog() {
   ).value;
   const kata = ambil("input-cari").value.trim().toLowerCase();
 
+  let visibleCount = 0;
+
   document.querySelectorAll("#grid-produk .kartu").forEach(function (k) {
-    k.hidden = !(
+    const cocok =
       (kategori === "semua" || k.dataset.kategori === kategori) &&
-      k.dataset.nama.toLowerCase().includes(kata)
-    );
+      k.dataset.nama.toLowerCase().includes(kata);
+    k.hidden = !cocok;
+    if (cocok) visibleCount++;
   });
+
+  tampilkanRekomendasi(visibleCount === 0, kategori, kata);
+}
+
+// Fitur tampilkan rekomendasi saat kosong
+function tampilkanRekomendasi(kosong, kategoriFilter, kataKunci) {
+  const kosongEl = ambil("katalog-kosong");
+  const rekomendasiSection = ambil("rekomendasi-section");
+  const gridRekomendasi = ambil("grid-rekomendasi");
+
+  if (!kosong) {
+    kosongEl.hidden = true;
+    rekomendasiSection.hidden = true;
+    gridRekomendasi.innerHTML = "";
+    return;
+  }
+
+  kosongEl.hidden = false;
+
+  // Kumpulkan semua menu yang TIDAK cocok dengan filter saat ini
+  const semuaKartu = Array.from(document.querySelectorAll("#grid-produk .kartu"));
+  const kandidat = semuaKartu.filter(function (k) {
+    const cocokKategori = kategoriFilter === "semua" || k.dataset.kategori === kategoriFilter;
+    const cocokKata = k.dataset.nama.toLowerCase().includes(kataKunci);
+    return !(cocokKategori && cocokKata); // Hanya yang tidak cocok
+  });
+
+  // Ambil 3 acak (atau kurang jika tidak cukup)
+  const acak = kandidat.sort(function () {
+    return Math.random() - 0.5;
+  }).slice(0, 3);
+
+  if (acak.length === 0) {
+    rekomendasiSection.hidden = true;
+    gridRekomendasi.innerHTML = "";
+    return;
+  }
+
+  // Clone kartu asli untuk rekomendasi
+  gridRekomendasi.innerHTML = "";
+  acak.forEach(function (k) {
+    const clone = k.cloneNode(true);
+    // Reset hidden state untuk rekomendasi
+    clone.hidden = false;
+    // Hapus event listener duplikat jika ada (kloning tidak menyalin listener)
+    gridRekomendasi.appendChild(clone);
+  });
+
+  rekomendasiSection.hidden = false;
 }
 
 // Fitur filter kategori
@@ -156,6 +208,20 @@ ambil("form-login").addEventListener("submit", function (e) {
     }
   }
 });
+
+// Fitur toggle password
+(function () {
+  const toggleBtn = ambil("toggle-password");
+  const passwordInput = ambil("isian-password");
+  if (toggleBtn && passwordInput) {
+    toggleBtn.addEventListener("click", function () {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      toggleBtn.setAttribute("aria-pressed", String(isPassword));
+      toggleBtn.setAttribute("aria-label", isPassword ? "Sembunyikan password" : "Tampilkan password");
+    });
+  }
+})();
 
 /* MENU DETAIL MENU */
 // Fitur tampilan detail menu

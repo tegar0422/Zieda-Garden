@@ -222,7 +222,11 @@ main.wadah {
   margin-bottom: 0;
 }
 
-.kolom-isian label {
+.kolom-isian label,
+.kotak label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -253,6 +257,57 @@ main.wadah {
 .kolom-isian .ilgn {
   height: 20px;
   width: auto;
+  flex-shrink: 0;
+  color: var(--teks);
+}
+
+/* Password Toggle */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--teks);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.password-toggle:hover {
+  color: var(--hijau-tua);
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid var(--aksen);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.password-toggle[aria-pressed="true"] .icon-eye-open {
+  display: none;
+}
+.password-toggle[aria-pressed="true"] .icon-eye-closed {
+  display: block;
+}
+.password-toggle:not([aria-pressed="true"]) .icon-eye-closed {
+  display: none;
 }
 
 /* Validasi Isisan */
@@ -432,30 +487,39 @@ body[data-halaman="login"] [data-nav="login"] {
 
 /* Filter Kategori */
 .sisi {
-  padding: 14px;
-  border: 1px solid var(--garis);
-  border-radius: var(--radius);
-  background: var(--putih);
-  box-shadow: var(--bayangan);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .sisi-judul {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--garis);
+  margin-bottom: 12px;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--teks-redup);
+  line-height: 1.2;
 }
 
 .kategori {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kategori > .sisi-item {
+  width: 100%;
+}
+
+.kategori > .sisi-item span {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sisi-item {
@@ -473,21 +537,23 @@ body[data-halaman="login"] [data-nav="login"] {
 .sisi-item span {
   position: relative;
   display: block;
-  padding: 8px 12px;
-  border: 1px solid var(--garis);
+  padding: 10px 12px;
   border-radius: 8px;
-  background: var(--putih);
-  font-size: 0.8rem;
+  background: transparent;
+  font-size: 0.85rem;
   font-weight: 500;
+  color: var(--teks);
+  transition: background 0.15s, color 0.15s;
 }
 
 .sisi-item:hover span {
   background: var(--krem);
+  color: var(--hijau-tua);
 }
 
 .sisi-item input:checked + span {
-  border-color: var(--krem-tua);
-  background: var(--krem-tua);
+  background: var(--hijau-muda);
+  color: var(--hijau-tua);
   font-weight: 700;
 }
 
@@ -623,11 +689,81 @@ body[data-halaman="login"] [data-nav="login"] {
   color: var(--teks-redup);
 }
 
-.kosong .tombol {
-  margin-top: 12px;
+.kosong[hidden] {
+  display: none;
+}
+
+.kosong-ikon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.kosong-judul {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--teks);
+}
+
+.kosong-deskripsi {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.kosong-saran {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--teks-redup);
+}
+
+/* Rekomendasi Section */
+.rekomendasi-section {
+  grid-column: 1 / -1;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--garis);
+}
+
+.rekomendasi-section[hidden] {
+  display: none;
+}
+
+.rekomendasi-judul {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teks);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rekomendasi-judul::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hijau-tua);
+}
+
+#grid-rekomendasi {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+/* Sembunyikan empty state jika ada rekomendasi */
+#katalog-kosong:not([hidden]) ~ .rekomendasi-section:not([hidden]) {
+  display: block;
 }
 
 #grid-produk:has(.kartu:not([hidden])) ~ #katalog-kosong {
+  display: none;
+}
+
+#grid-produk:has(.kartu:not([hidden])) ~ .rekomendasi-section {
   display: none;
 }
 
@@ -1248,7 +1384,8 @@ body[data-halaman="login"] main.wadah {
 }
 .baris-isian {
   display: grid;
-  gap: 0 14px;
+  grid-template-columns: 1fr;
+  gap: 14px 0;
 }
 /* ===== FITUR DAFTAR BARANG HANYA-BACA ===== */
 .daftar-ringkas .pengatur-jumlah button,
@@ -1344,9 +1481,6 @@ body[data-halaman="sukses"] #halaman-sukses {
   .dua-kolom {
     grid-template-columns: minmax(0, 1fr) 320px;
   }
-  .baris-isian {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   #daftar-keranjang .baris-keranjang {
     grid-template-columns: 56px minmax(0, 1fr) auto;
   }
@@ -1434,15 +1568,37 @@ body[data-halaman="sukses"] #halaman-sukses {
   }
   .sisi {
     position: static;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .sisi-judul {
+    margin-bottom: 12px;
+    color: var(--teks-redup);
   }
   .kategori {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-direction: column;
+    gap: 4px;
   }
-  .sisi-item span {
-    padding: 8px 12px;
-    border-color: var(--garis);
+  .kategori > .sisi-item {
+    width: 100%;
+  }
+  .kategori > .sisi-item span {
+    padding: 10px 12px;
+    background: transparent;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sisi-item:hover span {
+    background: var(--krem);
+    color: var(--hijau-tua);
+  }
+  .sisi-item input:checked + span {
+    background: var(--hijau-muda);
+    color: var(--hijau-tua);
+    font-weight: 700;
   }
   .sisi-item input:checked + span::after {
     display: none;
