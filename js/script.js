@@ -64,7 +64,11 @@ function rupiah(angka) {
 
 // Fitur buat ID unik transaksi (timestamp + random)
 function buatIdTransaksi() {
-  return "TRX" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
+  return (
+    "TRX" +
+    Date.now().toString(36).toUpperCase() +
+    Math.random().toString(36).substring(2, 6).toUpperCase()
+  );
 }
 
 // Fitur cek status login (kedaluwarsa 8 jam)
@@ -153,17 +157,22 @@ function tampilkanRekomendasi(kosong, kategoriFilter, kataKunci) {
   kosongEl.hidden = false;
 
   // Kumpulkan menu dari KATEGORI YANG SAMA saja (bukan kategori lain)
-  const semuaKartu = Array.from(document.querySelectorAll("#grid-produk .kartu"));
+  const semuaKartu = Array.from(
+    document.querySelectorAll("#grid-produk .kartu"),
+  );
   const kandidat = semuaKartu.filter(function (k) {
-    const cocokKategori = kategoriFilter === "semua" || k.dataset.kategori === kategoriFilter;
+    const cocokKategori =
+      kategoriFilter === "semua" || k.dataset.kategori === kategoriFilter;
     const cocokKata = k.dataset.nama.toLowerCase().includes(kataKunci);
     return cocokKategori && !cocokKata; // Hanya kategori sama, tapi tidak cocok kata kunci
   });
 
   // Ambil 3 acak (atau kurang jika tidak cukup)
-  const acak = kandidat.sort(function () {
-    return Math.random() - 0.5;
-  }).slice(0, 3);
+  const acak = kandidat
+    .sort(function () {
+      return Math.random() - 0.5;
+    })
+    .slice(0, 3);
 
   if (acak.length === 0) {
     rekomendasiSection.hidden = true;
@@ -226,7 +235,10 @@ ambil("form-login").addEventListener("submit", function (e) {
       const isPassword = passwordInput.type === "password";
       passwordInput.type = isPassword ? "text" : "password";
       toggleBtn.setAttribute("aria-pressed", String(isPassword));
-      toggleBtn.setAttribute("aria-label", isPassword ? "Sembunyikan password" : "Tampilkan password");
+      toggleBtn.setAttribute(
+        "aria-label",
+        isPassword ? "Sembunyikan password" : "Tampilkan password",
+      );
     });
   }
 })();
@@ -276,12 +288,12 @@ ambil("isian-jumlah").addEventListener("change", hitungKasir);
 function masukKeranjang() {
   const id = Number(menuDibuka.dataset.id);
   const jumlah = Number(ambil("isian-jumlah").value);
-  
+
   // Simpan salinan keranjang sebelum perubahan untuk rollback jika gagal
   const keranjangSebelumnya = keranjang.map(function (i) {
     return { id: i.id, jumlah: i.jumlah };
   });
-  
+
   const item = keranjang.find(function (i) {
     return i.id === id;
   });
@@ -290,9 +302,9 @@ function masukKeranjang() {
   } else {
     keranjang.push({ id: id, jumlah: jumlah });
   }
-  
+
   const berhasil = simpanKeranjang();
-  
+
   if (!berhasil) {
     // Rollback ke kondisi sebelumnya
     keranjang = keranjangSebelumnya;
@@ -510,7 +522,7 @@ ambil("form-checkout").addEventListener("submit", function (e) {
 
   // Set flag proteksi double submission
   checkoutSedangDiproses = true;
-  const tombolKirim = this.querySelector('button[type="submit"]');
+  const tombolKirim = document.querySelector('button[form="form-checkout"]');
   const teksAsli = tombolKirim.textContent;
   tombolKirim.textContent = "Memproses...";
   tombolKirim.disabled = true;
@@ -537,8 +549,12 @@ ambil("form-checkout").addEventListener("submit", function (e) {
       const berhasilPaksa = paksaKosongkanKeranjang();
       if (!berhasilPaksa) {
         // Critical: tidak bisa kosongkan keranjang, user harus diinformasikan
-        console.error("Kritis: Gagal mengosongkan keranjang setelah transaksi. User perlu clear manual.");
-        alert("Pesanan berhasil dibuat, tapi keranjang gagal dikosongkan. Silakan refresh halaman atau hapus keranjang manual.");
+        console.error(
+          "Kritis: Gagal mengosongkan keranjang setelah transaksi. User perlu clear manual.",
+        );
+        alert(
+          "Pesanan berhasil dibuat, tapi keranjang gagal dikosongkan. Silakan refresh halaman atau hapus keranjang manual.",
+        );
       }
     }
 
@@ -562,53 +578,62 @@ ambil("form-checkout").addEventListener("submit", function (e) {
 // Mencari pesanan berdasarkan ID dari URL hash (#/sukses/ID_TRANSAKSI)
 function tampilkanSukses(idTransaksi) {
   const riwayat = bacaData("riwayatPesanan", []);
-  
+
   // Validasi data riwayat - pastikan array dan item memiliki ID
-  const riwayatValid = Array.isArray(riwayat) 
-    ? riwayat.filter(function (p) { return p && typeof p.id === "string"; })
+  const riwayatValid = Array.isArray(riwayat)
+    ? riwayat.filter(function (p) {
+        return p && typeof p.id === "string";
+      })
     : [];
-  
+
   let pesanan = null;
   let idDitemukan = false;
-  
+
   if (idTransaksi) {
     // URL mengandung ID transaksi - wajib cocok, tidak fallback ke pesanan lain
-    pesanan = riwayatValid.find(function (p) { return p.id === idTransaksi; }) || null;
+    pesanan =
+      riwayatValid.find(function (p) {
+        return p.id === idTransaksi;
+      }) || null;
     idDitemukan = !!pesanan;
   } else {
     // Tidak ada ID di URL - fallback ke pesanan terbaru (kompatibilitas lama)
-    pesanan = (riwayatValid.length > 0 ? riwayatValid[0] : null) || bacaData("pesananTerakhir", null);
+    pesanan =
+      (riwayatValid.length > 0 ? riwayatValid[0] : null) ||
+      bacaData("pesananTerakhir", null);
     idDitemukan = !!pesanan;
   }
 
   // Tampilkan status tidak ditemukan jika ID ada tapi tidak cocok
   const adaIdTapiTidakCocok = idTransaksi && !idDitemukan;
-  
+
   ambil("isi-sukses").hidden = adaIdTapiTidakCocok || !pesanan;
   ambil("sukses-tidak-ada").hidden = !(adaIdTapiTidakCocok || !pesanan);
-  
+
   if (adaIdTapiTidakCocok) {
     // ID transaksi ada di URL tapi tidak ditemukan di riwayat
     // Buat elemen dengan createElement untuk keamanan dan tautan yang bisa diklik
     const wadah = ambil("sukses-tidak-ada");
     wadah.replaceChildren();
-    
-    const teks = document.createTextNode("Pesanan dengan ID " + idTransaksi + " tidak ditemukan. ");
+
+    const teks = document.createTextNode(
+      "Pesanan dengan ID " + idTransaksi + " tidak ditemukan. ",
+    );
     wadah.appendChild(teks);
-    
+
     const tautan = document.createElement("a");
     tautan.href = "#/";
     tautan.className = "tautan";
     tautan.textContent = "Kembali ke katalog";
     wadah.appendChild(tautan);
-    
+
     return;
   }
-  
+
   if (!pesanan) {
     return;
   }
-  
+
   ambil("sukses-pemesan").textContent =
     "Terima kasih, " + pesanan.nama + ". Pesananmu sudah tercatat.";
   ambil("sukses-rincian").textContent = pesanan.alamat
