@@ -543,7 +543,9 @@ body[data-halaman="login"] [data-nav="login"] {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--teks);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .sisi-item:hover span {

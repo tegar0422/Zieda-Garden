@@ -36,7 +36,10 @@ function bacaData(kunci, bawaan) {
 function tulisData(kunci, nilai) {
   try {
     localStorage.setItem(kunci, JSON.stringify(nilai));
-  } catch (e) {}
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 // Fitur ambil kartu menu berdasarkan id
@@ -57,6 +60,11 @@ function hargaMenu(id) {
 // Fitur format harga rupiah
 function rupiah(angka) {
   return "Rp" + String(angka).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Fitur buat ID unik transaksi (timestamp + random)
+function buatIdTransaksi() {
+  return "TRX" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
 }
 
 // Fitur cek status login (kedaluwarsa 8 jam)
@@ -144,12 +152,12 @@ function tampilkanRekomendasi(kosong, kategoriFilter, kataKunci) {
 
   kosongEl.hidden = false;
 
-  // Kumpulkan semua menu yang TIDAK cocok dengan filter saat ini
+  // Kumpulkan menu dari KATEGORI YANG SAMA saja (bukan kategori lain)
   const semuaKartu = Array.from(document.querySelectorAll("#grid-produk .kartu"));
   const kandidat = semuaKartu.filter(function (k) {
     const cocokKategori = kategoriFilter === "semua" || k.dataset.kategori === kategoriFilter;
     const cocokKata = k.dataset.nama.toLowerCase().includes(kataKunci);
-    return !(cocokKategori && cocokKata); // Hanya yang tidak cocok
+    return cocokKategori && !cocokKata; // Hanya kategori sama, tapi tidak cocok kata kunci
   });
 
   // Ambil 3 acak (atau kurang jika tidak cukup)
@@ -268,6 +276,12 @@ ambil("isian-jumlah").addEventListener("change", hitungKasir);
 function masukKeranjang() {
   const id = Number(menuDibuka.dataset.id);
   const jumlah = Number(ambil("isian-jumlah").value);
+  
+  // Simpan salinan keranjang sebelum perubahan untuk rollback jika gagal
+  const keranjangSebelumnya = keranjang.map(function (i) {
+    return { id: i.id, jumlah: i.jumlah };
+  });
+  
   const item = keranjang.find(function (i) {
     return i.id === id;
   });
@@ -276,23 +290,38 @@ function masukKeranjang() {
   } else {
     keranjang.push({ id: id, jumlah: jumlah });
   }
-  simpanKeranjang();
+  
+  const berhasil = simpanKeranjang();
+  
+  if (!berhasil) {
+    // Rollback ke kondisi sebelumnya
+    keranjang = keranjangSebelumnya;
+    // Sinkronkan lencana dengan data yang sudah di-rollback
+    ambil("lencana-keranjang").textContent = jumlahBarang();
+    alert("Gagal menyimpan keranjang. Silakan coba lagi.");
+    return false;
+  }
+  return true;
 }
 
 // Fitur tombol tambah ke keranjang
 ambil("tombol-keranjang").addEventListener("click", function () {
-  masukKeranjang();
-  const tombol = this;
-  tombol.textContent = "Ditambahkan ✓";
-  setTimeout(function () {
-    tombol.textContent = "Tambah ke keranjang";
-  }, 1500);
+  const berhasil = masukKeranjang();
+  if (berhasil) {
+    const tombol = this;
+    tombol.textContent = "Ditambahkan ✓";
+    setTimeout(function () {
+      tombol.textContent = "Tambah ke keranjang";
+    }, 1500);
+  }
 });
 
 // Fitur tombol pesan sekarang
 ambil("tombol-pesan").addEventListener("click", function () {
-  masukKeranjang();
-  location.hash = "#/checkout";
+  const berhasil = masukKeranjang();
+  if (berhasil) {
+    location.hash = "#/checkout";
+  }
 });
 
 /* ===== MENU KERANJANG ===== */
@@ -308,9 +337,44 @@ function totalHarga() {
   }, 0);
 }
 // Fitur simpan keranjang dan lencana jumlah di header
+// Mengembalikan true jika berhasil, false jika gagal
 function simpanKeranjang() {
-  tulisData("keranjang", keranjang);
-  ambil("lencana-keranjang").textContent = jumlahBarang();
+  const berhasil = tulisData("keranjang", keranjang);
+  if (berhasil) {
+    ambil("lencana-keranjang").textContent = jumlahBarang();
+  }
+  return berhasil;
+}
+
+// Fitur paksa kosongkan keranjang (fallback jika simpanKeranjang gagal)
+// Mengembalikan true hanya jika localStorage benar-benar tidak menyimpan data keranjang lagi
+function paksaKosongkanKeranjang() {
+  keranjang = [];
+  // Coba simpan array kosong
+  let berhasil = tulisData("keranjang", []);
+  if (berhasil) {
+    // Verifikasi: pastikan localStorage benar-benar kosong
+    const verif = bacaData("keranjang", null);
+    if (verif === null || (Array.isArray(verif) && verif.length === 0)) {
+      ambil("lencana-keranjang").textContent = "0";
+      return true;
+    }
+    // Jika verifikasi gagal, lanjut ke fallback removeItem
+    berhasil = false;
+  }
+  // Fallback: hapus langsung dari localStorage
+  try {
+    localStorage.removeItem("keranjang");
+    // Verifikasi setelah removeItem
+    const verif = bacaData("keranjang", null);
+    if (verif === null || (Array.isArray(verif) && verif.length === 0)) {
+      ambil("lencana-keranjang").textContent = "0";
+      return true;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return false;
 }
 // Fitur daftar barang dari template baris
 function isiBaris(wadah, daftar) {
@@ -351,6 +415,15 @@ ambil("daftar-keranjang").addEventListener("click", function (e) {
   const item = keranjang.find(function (i) {
     return i.id === id;
   });
+  if (!item) {
+    return;
+  }
+
+  // Simpan salinan keranjang sebelum perubahan untuk rollback jika gagal
+  const keranjangSebelumnya = keranjang.map(function (i) {
+    return { id: i.id, jumlah: i.jumlah };
+  });
+
   if (aksi === "kurang") {
     item.jumlah -= 1;
   }
@@ -362,7 +435,22 @@ ambil("daftar-keranjang").addEventListener("click", function (e) {
       return i !== item;
     });
   }
-  simpanKeranjang();
+
+  const berhasil = simpanKeranjang();
+
+  if (!berhasil) {
+    // Rollback ke kondisi sebelumnya
+    keranjang = keranjangSebelumnya;
+    // Perbarui lencana jumlah keranjang
+    ambil("lencana-keranjang").textContent = jumlahBarang();
+    // Tampilkan pesan kesalahan
+    alert("Gagal menyimpan perubahan keranjang. Silakan coba lagi.");
+    // Render ulang keranjang menggunakan data yang sudah dipulihkan
+    tampilkanKeranjang();
+    return;
+  }
+
+  // Jika berhasil, tampilkan perubahan seperti biasa
   tampilkanKeranjang();
 });
 /* ===== MENU CHECKOUT ===== */
@@ -385,14 +473,28 @@ function tampilkanCheckout() {
   isiBaris(ambil("ringkasan-checkout"), keranjang);
   ambil("checkout-total").textContent = rupiah(totalHarga());
 }
+// Proteksi double submission checkout
+let checkoutSedangDiproses = false;
+
 // Fitur buat pesanan (form sudah divalidasi oleh HTML)
 ambil("form-checkout").addEventListener("submit", function (e) {
   e.preventDefault();
+
+  // Cegah double submission
+  if (checkoutSedangDiproses) {
+    return;
+  }
+
   if (keranjang.length === 0) {
     location.hash = "#/keranjang";
     return;
   }
+
+  // Buat ID unik transaksi
+  const idTransaksi = buatIdTransaksi();
+
   const pesanan = {
+    id: idTransaksi,
     nama: ambil("isian-nama").value.trim(),
     hp: ambil("isian-hp").value.trim(),
     alamat: ambil("isian-alamat").value.trim(),
@@ -405,23 +507,108 @@ ambil("form-checkout").addEventListener("submit", function (e) {
     total: totalHarga(),
     waktu: new Date().toISOString(),
   };
-  tulisData("pesananTerakhir", pesanan);
-  keranjang = [];
-  simpanKeranjang();
-  this.reset();
-  periksaCheckout();
-  location.hash = "#/sukses";
+
+  // Set flag proteksi double submission
+  checkoutSedangDiproses = true;
+  const tombolKirim = this.querySelector('button[type="submit"]');
+  const teksAsli = tombolKirim.textContent;
+  tombolKirim.textContent = "Memproses...";
+  tombolKirim.disabled = true;
+
+  try {
+    // Simpan ke riwayatPesanan (array, tidak menimpa)
+    const riwayat = bacaData("riwayatPesanan", []);
+    riwayat.unshift(pesanan); // Pesanan terbaru di depan
+    const berhasilSimpanRiwayat = tulisData("riwayatPesanan", riwayat);
+
+    if (!berhasilSimpanRiwayat) {
+      throw new Error("Gagal menyimpan pesanan ke localStorage");
+    }
+
+    // Kompatibilitas mundur: simpan juga ke pesananTerakhir untuk halaman sukses lama
+    tulisData("pesananTerakhir", pesanan);
+
+    // HAPUS keranjang HANYA setelah transaksi berhasil disimpan
+    keranjang = [];
+    const berhasilKosongkanKeranjang = simpanKeranjang();
+
+    if (!berhasilKosongkanKeranjang) {
+      // Fallback: paksa kosongkan keranjang untuk mencegah keranjang lama muncul setelah reload
+      const berhasilPaksa = paksaKosongkanKeranjang();
+      if (!berhasilPaksa) {
+        // Critical: tidak bisa kosongkan keranjang, user harus diinformasikan
+        console.error("Kritis: Gagal mengosongkan keranjang setelah transaksi. User perlu clear manual.");
+        alert("Pesanan berhasil dibuat, tapi keranjang gagal dikosongkan. Silakan refresh halaman atau hapus keranjang manual.");
+      }
+    }
+
+    this.reset();
+    periksaCheckout();
+    // Redirect ke halaman sukses dengan ID transaksi
+    location.hash = "#/sukses/" + idTransaksi;
+  } catch (error) {
+    // Tampilkan pesan kesalahan, pertahankan isi keranjang
+    alert("Gagal membuat pesanan: " + error.message + ". Silakan coba lagi.");
+  } finally {
+    // Reset flag dan tombol
+    checkoutSedangDiproses = false;
+    tombolKirim.textContent = teksAsli;
+    tombolKirim.disabled = false;
+  }
 });
 
 /* ===== MENU SUKSES ===== */
 // Fitur rincian pesanan yang baru dibuat
-function tampilkanSukses() {
-  const pesanan = bacaData("pesananTerakhir", null);
-  ambil("isi-sukses").hidden = !pesanan;
-  ambil("sukses-tidak-ada").hidden = Boolean(pesanan);
+// Mencari pesanan berdasarkan ID dari URL hash (#/sukses/ID_TRANSAKSI)
+function tampilkanSukses(idTransaksi) {
+  const riwayat = bacaData("riwayatPesanan", []);
+  
+  // Validasi data riwayat - pastikan array dan item memiliki ID
+  const riwayatValid = Array.isArray(riwayat) 
+    ? riwayat.filter(function (p) { return p && typeof p.id === "string"; })
+    : [];
+  
+  let pesanan = null;
+  let idDitemukan = false;
+  
+  if (idTransaksi) {
+    // URL mengandung ID transaksi - wajib cocok, tidak fallback ke pesanan lain
+    pesanan = riwayatValid.find(function (p) { return p.id === idTransaksi; }) || null;
+    idDitemukan = !!pesanan;
+  } else {
+    // Tidak ada ID di URL - fallback ke pesanan terbaru (kompatibilitas lama)
+    pesanan = (riwayatValid.length > 0 ? riwayatValid[0] : null) || bacaData("pesananTerakhir", null);
+    idDitemukan = !!pesanan;
+  }
+
+  // Tampilkan status tidak ditemukan jika ID ada tapi tidak cocok
+  const adaIdTapiTidakCocok = idTransaksi && !idDitemukan;
+  
+  ambil("isi-sukses").hidden = adaIdTapiTidakCocok || !pesanan;
+  ambil("sukses-tidak-ada").hidden = !(adaIdTapiTidakCocok || !pesanan);
+  
+  if (adaIdTapiTidakCocok) {
+    // ID transaksi ada di URL tapi tidak ditemukan di riwayat
+    // Buat elemen dengan createElement untuk keamanan dan tautan yang bisa diklik
+    const wadah = ambil("sukses-tidak-ada");
+    wadah.replaceChildren();
+    
+    const teks = document.createTextNode("Pesanan dengan ID " + idTransaksi + " tidak ditemukan. ");
+    wadah.appendChild(teks);
+    
+    const tautan = document.createElement("a");
+    tautan.href = "#/";
+    tautan.className = "tautan";
+    tautan.textContent = "Kembali ke katalog";
+    wadah.appendChild(tautan);
+    
+    return;
+  }
+  
   if (!pesanan) {
     return;
   }
+  
   ambil("sukses-pemesan").textContent =
     "Terima kasih, " + pesanan.nama + ". Pesananmu sudah tercatat.";
   ambil("sukses-rincian").textContent = pesanan.alamat
@@ -441,9 +628,10 @@ const JUDUL = {
   sukses: "Pesanan berhasil",
 };
 
-// Fitur pindah halaman berdasarkan hash URL, contoh: #/detail/3
+// Fitur pindah halaman berdasarkan hash URL, contoh: #/detail/3, #/sukses/TRX123
 function aturHalaman() {
-  const bagian = location.hash.replace("#/", "").split("/");
+  const hash = location.hash.replace("#/", "");
+  const bagian = hash.split("/");
   let halaman = bagian[0] || "katalog";
   if (
     !["katalog", "login", "detail", "keranjang", "checkout", "sukses"].includes(
@@ -482,7 +670,8 @@ function aturHalaman() {
     tampilkanCheckout();
   }
   if (halaman === "sukses") {
-    tampilkanSukses();
+    // bagian[1] berisi ID transaksi jika ada (format: #/sukses/ID_TRANSAKSI)
+    tampilkanSukses(bagian[1]);
   }
   document.title = JUDUL[halaman] + " - Zieda Garden";
   const judulHalaman = document.querySelector("#halaman-" + halaman + " h1");
