@@ -218,7 +218,9 @@
             </div>
             <!-- Menu tidak ditemukan -->
             <div class="kosong" id="katalog-kosong" hidden>
-              <div class="kosong-ikon" aria-hidden="true">🔍</div>
+              <div class="kosong-ikon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path><path d="M8.5 11h5"></path></svg>
+              </div>
               <p class="kosong-judul">Menu tidak ditemukan</p>
               <p class="kosong-deskripsi">
                 Kami tidak menemukan menu yang cocok dengan pencarian Anda.
@@ -226,6 +228,9 @@
               <p class="kosong-saran">
                 Atau coba kata lain dan pilih kategori lain.
               </p>
+              <button type="button" class="tombol tombol-utama" id="tombol-reset-cari">
+                Lihat semua menu
+              </button>
             </div>
             <!-- Rekomendasi menu lain -->
             <section
@@ -449,7 +454,13 @@
         <h1 class="judul-halaman">Keranjang</h1>
         <!-- Fitur keranjang kosong -->
         <div class="kosong" id="keranjang-kosong">
-          <p>Keranjang masih kosong.</p>
+          <div class="kosong-ikon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"></circle><circle cx="18" cy="20" r="1.4"></circle><path d="M2 3h3l2.4 12.2a1.5 1.5 0 0 0 1.5 1.2h8.7a1.5 1.5 0 0 0 1.5-1.1L21 8H6"></path></svg>
+          </div>
+          <p class="kosong-judul">Keranjang masih kosong</p>
+          <p class="kosong-deskripsi">
+            Pilih menu favoritmu, lalu tambahkan ke keranjang.
+          </p>
           <a class="tombol tombol-utama" href="#/">Mulai belanja</a>
         </div>
         <div class="dua-kolom" id="keranjang-isi">
@@ -698,6 +709,17 @@
         </div>
       </article>
     </template>
+    <!-- Fitur kotak konfirmasi di tengah layar -->
+    <dialog class="kotak-konfirmasi" id="kotak-konfirmasi" aria-labelledby="konfirmasi-judul" aria-describedby="konfirmasi-pesan">
+      <div class="konfirmasi-ikon" aria-hidden="true">!</div>
+      <h2 id="konfirmasi-judul">Konfirmasi</h2>
+      <p id="konfirmasi-pesan"></p>
+      <div class="konfirmasi-aksi">
+        <button type="button" class="konfirmasi-batal" id="konfirmasi-batal">Batal</button>
+        <button type="button" class="konfirmasi-ya" id="konfirmasi-ya">Ya</button>
+      </div>
+    </dialog>
+
     <script src="js/script.js"></script>
   </body>
 </html>
